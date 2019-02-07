@@ -2,42 +2,9 @@ import sys
 import argparse
 import string
 
-# our main function
-if __name__=="__main__":
-    # set up the argument parser
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-i', dest='filein',help='input file')
-    parser.add_argument('-o', dest='fileout', help='output file')
-    parser.add_argument('-k', dest='key',help='cipher key')
-    parser.add_argument('-m', dest='mode',help='encryption/decryption mode')
-    parser.add_argument('-t', dest='type',help='input type')
-
-    # parse our arguments
-    args = parser.parse_args()
-    filein=args.filein
-    fileout=args.fileout
-    k = args.key
-    mode = args.mode
-    input_type = args.type
-    
-    if(mode.upper()=="E"):       #Encryption
-        if(input_type.upper()=="P"):          #printable
-            encrypt_printable(filein=filein,fileout=fileout,k=k)
-        if(input_type.lower()=="B"):          #binary
-            encrypt_binary(filein=filein,fileout=fileout,k=k)
-        else:
-            raise ValueError("Please enter your input type parameter 't'! P for printable or B for binary")
-            
-    if(mode.upper()=="D"):        #Decryption
-        if(input_type.upper()=="P"):
-            decrypt_printable(filein=filein,fileout=fileout,k=k)
-        if(input_type.lower()=="B"):
-            decrypt_binary(filein=filein,fileout=fileout,k=k)
-        else:
-            raise ValueError("Please enter your input type parameter 't'! P for printable or B for binary")
-    else:
-        raise ValueError("Please enter your mode parameter 'm'! E for encryption or D for decryption")
-
+printabledict={}
+for i in range(len(string.printable)):
+    printabledict[i]=string.printable[i]
     
 def encrypt_printable(filein="sherlock.txt",fileout="sherlock_encrypted.txt",k=None):
     
@@ -105,7 +72,7 @@ def encrypt_binary(filein="sherlock.txt",fileout="sherlock_encrypted.txt",k=None
     fin  = open(filein, mode='rb')       # binary read mode
     c    = bytearray(fin.read())         # read in file into c
     fout = open(fileout, mode='wb+')      # write mode
-    msg_out = bytearray("")            #initialise empty bytearray string
+    msg_out = bytearray(b"")            #initialise empty bytearray string
     for char in c:
         msg_out.append((char+k)%256)
     fout.write(msg_out)
@@ -128,9 +95,10 @@ def decrypt_binary(filein="sherlock_encrypted.txt",fileout="sherlock_decrypted.t
     fin  = open(filein, mode='rb')       # binary read mode
     c    = fin.read()         # read in file into c
     fout = open(fileout, mode='wb+')      # write mode
+    msg_out = bytearray(b"")            #initialise empty bytearray string
     for char in c:
-        print (char)
-        fout.write((bytearray((char-k)%256)))
+        msg_out.append((char-k)%256)
+    fout.write(msg_out)
     fin.close()
     fout.close()
     
@@ -151,3 +119,45 @@ def val_to_char(val):
     if(val<0)or(val>99):
         raise ValueError("Input must be between 0 and 99!")
     return printabledict[val]
+
+
+# our main function
+if __name__=="__main__":
+    # set up the argument parser
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', dest='filein',help='input file')
+    parser.add_argument('-o', dest='fileout', help='output file')
+    parser.add_argument('-k', dest='key',help='cipher key')
+    parser.add_argument('-m', dest='mode',help='encryption/decryption mode')
+    parser.add_argument('-t', dest='type',help='input type')
+
+    # parse our arguments
+    args = parser.parse_args()
+    filein=args.filein
+    fileout=args.fileout
+    k = int(args.key)
+    mode = args.mode
+    input_type = args.type
+    
+    if not(type(mode)is str):
+        raise ValueError("Please enter your mode parameter 'm'! E for encryption or D for decryption")
+    elif not(type(input_type)is str):
+        raise ValueError("Please enter your input type parameter 't'! P for printable or B for binary")
+    
+    elif(mode.upper()=="E"):       #Encryption
+        if(input_type.upper()=="P"):          #printable
+            encrypt_printable(filein=filein,fileout=fileout,k=k)
+        elif(input_type.upper()=="B"):          #binary
+            encrypt_binary(filein=filein,fileout=fileout,k=k)
+        else:
+            raise ValueError("Please enter your input type parameter 't'! P for printable or B for binary")
+            
+    elif(mode.upper()=="D"):        #Decryption
+        if(input_type.upper()=="P"):
+            decrypt_printable(filein=filein,fileout=fileout,k=k)
+        elif(input_type.upper()=="B"):
+            decrypt_binary(filein=filein,fileout=fileout,k=k)
+        else:
+            raise ValueError("Please enter your input type parameter 't'! P for printable or B for binary")
+    else:
+        raise ValueError("Please enter your mode parameter 'm'! E for encryption or D for decryption")
