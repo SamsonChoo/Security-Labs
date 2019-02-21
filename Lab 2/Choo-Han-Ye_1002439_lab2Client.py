@@ -106,6 +106,10 @@ def sol2():
     ## hardcoded mask
     mask = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x04\x03\x09\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x00'
     ## print(mask)
+    a = b"Student ID: 1000000 and grade 0."
+    b = b"Student ID: 1002439 and grade 4."
+    mask = XOR(a,b)
+    print(mask)
     message = XOR(mask, challenge)
     conn.send(message)
     message = conn.recvline()
@@ -121,5 +125,5 @@ if __name__ == "__main__":
     URL = '157.230.47.126'
     PORT = 1337
 
-    sol1()
+    # sol1()
     sol2()
