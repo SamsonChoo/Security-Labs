@@ -2,6 +2,7 @@
 
 # Present skeleton file for 50.020 Security
 # Oka, SUTD, 2014
+# Samson, SUTD, 2019
 
 # constants
 FULLROUND = 31
@@ -32,14 +33,21 @@ def ror(val, r_bits, max_bits): return \
 
 
 def genRoundKeys(key):
-    pass
+    roundkeydict = {0:32}
+    for i in range(1,33):
+        roundkeydict[i]=(key>>16)
+        key = rol(key,61,80)
+        key = (sbox[key>>76]<<76)+((key<<4)>>4)
+        key = key ^ (i<<15)
+    return roundkeydict
 
 
 def addRoundKey(state, Ki):
-    pass
+    return state^Ki
 
 
 def sBoxLayer(state):
+    
     pass
 
 
