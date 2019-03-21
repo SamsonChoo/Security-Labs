@@ -106,8 +106,13 @@ def sol2():
     ## hardcoded mask
     mask = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x04\x03\x09\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x00'
     ## print(mask)
+<<<<<<< HEAD
     a = b"Student ID 1000000 gets 0 points."
     b = b"Student ID 1002439 gets 4 points."
+=======
+    a = b"Student ID: 1000000 and grade 0."
+    b = b"Student ID: 1002439 and grade 4."
+>>>>>>> 1f01c34465a22b6a8ffacf9485e184e6cc0fac43
     mask = XOR(a,b)
     print(mask)
     message = XOR(mask, challenge)
