@@ -11,11 +11,17 @@ FULLROUND = 31
 sbox = [0xC, 0x5, 0x6, 0xB, 0x9, 0x0, 0xA, 0xD,
         0x3, 0xE, 0xF, 0x8, 0x4, 0x7, 0x1, 0x2]
 
+# inverse S-Box
+sbox_inverse = [sbox.index(x) for x in range(16)]
+
 # PLayer
 pmt = [0, 16, 32, 48, 1, 17, 33, 49, 2, 18, 34, 50, 3, 19, 35, 51,
        4, 20, 36, 52, 5, 21, 37, 53, 6, 22, 38, 54, 7, 23, 39, 55,
        8, 24, 40, 56, 9, 25, 41, 57, 10, 26, 42, 58, 11, 27, 43, 59,
        12, 28, 44, 60, 13, 29, 45, 61, 14, 30, 46, 62, 15, 31, 47, 63]
+
+# inverse PLayer
+pmt_inverse = [pmt.index(x) for x in range(64)]
 
 # Rotate left: 0b1001 --> 0b0011
 
@@ -37,7 +43,7 @@ def genRoundKeys(key):
     for i in range(1,33):
         roundkeydict[i]=(key>>16)
         key = rol(key,61,80)
-        key = (sbox[key>>76]<<76)+((key<<4)>>4)
+        key = (sbox[key>>76]<<76) + (key&(2**76-1))
         key = key ^ (i<<15)
     return roundkeydict
 
@@ -47,19 +53,41 @@ def addRoundKey(state, Ki):
 
 
 def sBoxLayer(state):
-    
-    pass
+    statefin=0
+    for i in range(16):
+        statefin+=sbox[((state>>(i*4))&0xF)]<<(i*4)
+    return statefin
 
+def sBoxLayer_inv(state):
+    statefin=0
+    for i in range(16):
+        statefin+=sbox_inverse[((state>>(i*4))&0xF)]<<(i*4)
+    return statefin
 
 def pLayer(state):
-    pass
+    statefin=0
+    for i in range(64):
+        statefin+=((state>>i)&0x01)<<pmt[i]
+    return statefin
+
+def pLayer_inv(state):
+    statefin=0
+    for i in range(64):
+        statefin+=((state>>i)&0x01)<<pmt_inverse[i]
+    return statefin
 
 
 def present_round(state, roundKey):
+    state = addRoundKey(state,roundKey)
+    state = sBoxLayer(state)
+    state = pLayer(state)
     return state
 
 
 def present_inv_round(state, roundKey):
+    state = pLayer_inv(state)
+    state = sBoxLayer_inv(state)
+    state = addRoundKey(state,roundKey)
     return state
 
 
