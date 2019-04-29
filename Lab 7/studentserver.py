@@ -74,6 +74,10 @@ def requires_auth(f):
     return decorated
 
 
+##Context
+context = ('server.crt','server.key')
+
+
 # local database
 global storagedict
 storagedict = {}
@@ -96,4 +100,4 @@ def api_message():
         return "please specify GET or POST method"
     
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True, ssl_context=context)

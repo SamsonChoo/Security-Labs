@@ -20,15 +20,15 @@
 
 import requests
 import json
-URL="http://127.0.0.1:5000/messages"
+URL="https://127.0.0.1:5000/messages"
 payload = {"message":"Hello World"}
 
 ##POST
 print("Posting content")
-resp = requests.post(url=URL, data=json.dumps(payload), auth=('samson', 'securepwd'), headers={"content-type":"application/json"})
+resp = requests.post(url=URL, data=json.dumps(payload), auth=('samson', 'securepwd'), headers={"content-type":"application/json"}, verify="server.crt")
 print(resp.text)
 
 ##Get
 print("Getting content")
-resp = requests.get(url=URL, auth=('samson', 'securepwd'))
+resp = requests.get(url=URL, auth=('samson', 'securepwd'), verify="server.crt")
 print(resp.text)
